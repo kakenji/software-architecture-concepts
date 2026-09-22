@@ -1,0 +1,25 @@
+graph TD
+    classDef user fill:#1e293b,stroke:#334155,color:#f8fafc;
+    classDef system fill:#0369a1,stroke:#0284c7,color:#fff;
+    classDef infra fill:#334155,stroke:#475569,color:#fff;
+
+    Admin((Administrador)):::user
+    Vendedor((Vendedor)):::user
+    Estoque((Gestor de Estoque)):::user
+
+    subgraph SalesSystem [Sistema de Vendas]
+        Presentation[Apresentação<br>Dashboard Web / PWA<br>Interface de vendas e usuários]:::system
+        Domain[Domínio<br>API REST / Endpoints & Auth JWT<br>POST, GET, PUT, DELETE]:::system
+    end
+
+    DB[(Banco de Dados<br>PostgreSQL)]:::infra
+
+    Admin -- "Gerencia usuários e relatórios<br>Requisições HTTP" --> Presentation
+    Vendedor -- "Registra vendas e clientes<br>Requisições HTTP" --> Presentation
+    Estoque -- "Atualiza produtos e quantidades<br>Requisições HTTP" --> Presentation
+
+    Presentation -- "Requisições HTTP / JSON" --> Domain
+    Domain -- "Lê e grava dados" --> DB
+
+    style SalesSystem fill:#0f172a,stroke:#38bdf8,stroke-width:2px,color:#fff
+    style DB fill:#090d16,stroke:#475569,stroke-dasharray: 5 5,color:#94a3b8
