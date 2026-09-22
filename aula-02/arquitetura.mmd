@@ -1,0 +1,45 @@
+graph TD
+    classDef external fill:#1e293b,stroke:#334155,color:#f8fafc;
+    classDef client fill:#0f766e,stroke:#115e59,color:#fff;
+    classDef core fill:#0369a1,stroke:#0284c7,color:#fff;
+    classDef infra fill:#334155,stroke:#475569,color:#fff;
+
+    subgraph External [Fontes Externas e Dispositivos]
+        HospitalSys[Sistema do Hospital<br>Registro de Alta - POST]:::external
+        IoT[Tags e Sensores]:::external
+    end
+
+    subgraph Interfaces [Tempo Real]
+        Dashboard[Dashboard Web<br>React]:::client
+        MobileApp[Aplicativo PWA / Mobile<br>Equipe de Limpeza]:::client
+    end
+
+    subgraph LetoCore [LETO Backend]
+        Gateway[API Gateway / Rotas REST<br>JWT e Guardas de Permissão]:::core
+        
+        subgraph Modules [Módulos de Domínio]
+            BedMod[Bed / Room Module<br>Gestão de Leitos e Estados]:::core
+            CleaningMod[Cleaning Module<br>Métrica de Tempos e Fluxos]:::core
+            IoTAdapter[IoT e Events Adapter<br>Normalização de Payloads]:::core
+        end
+        
+        WSGateway[WebSocket Gateway<br>Atualização em Tempo Real]:::core
+    end
+
+    HospitalSys -->|Envia dados de alta POST| Gateway
+    IoT -->|Eventos de Leitura Tag| Gateway
+    
+    Dashboard -->|Requisicoes HTTP JWT| Gateway
+    MobileApp -->|Requisicoes HTTP JWT| Gateway
+    
+    Gateway --> Modules
+    IoTAdapter --> BedMod
+    BedMod --> CleaningMod
+
+    BedMod -->|Notifica mudanca de estado| WSGateway
+    WSGateway -->|Push de eventos| Dashboard
+    WSGateway -->|Push de avisos| MobileApp
+
+    style LetoCore fill:#0f172a,stroke:#38bdf8,stroke-width:2px,color:#fff
+    style External fill:#090d16,stroke:#1e293b,stroke-dasharray: 5 5,color:#94a3b8
+    style Interfaces fill:#090d16,stroke:#0f766e,stroke-dasharray: 5 5,color:#94a3b8

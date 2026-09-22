@@ -1,0 +1,19 @@
+graph TD
+    classDef user fill:#1e293b,stroke:#334155,color:#f8fafc;
+    classDef system fill:#0369a1,stroke:#0284c7,color:#fff;
+    classDef infra fill:#334155,stroke:#475569,color:#fff;
+
+    Admin((Administrador)):::user
+    Vendedor((Vendedor)):::user
+    Estoque((Gestor de Estoque)):::user
+
+    System[Sistema de Vendas<br>API REST com Rotas HTTP, JWT<br>e Gestão de Produtos e Estoque]:::system
+
+    Admin -- "Gerencia usuários, relatórios<br>e configurações via API" --> System
+    Vendedor -- "Registra vendas, clientes<br>e realiza requisições HTTP" --> System
+    Estoque -- "Atualiza produtos, quantidades<br>e controla entradas e saídas" --> System
+
+    style Admin fill:#1e293b,stroke:#334155,color:#f8fafc
+    style Vendedor fill:#1e293b,stroke:#334155,color:#f8fafc
+    style Estoque fill:#1e293b,stroke:#334155,color:#f8fafc
+    style System fill:#0369a1,stroke:#0284c7,color:#fff

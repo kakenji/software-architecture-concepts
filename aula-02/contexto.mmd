@@ -1,0 +1,23 @@
+graph TD
+    classDef external fill:#1e293b,stroke:#334155,color:#f8fafc;
+    classDef client fill:#0f766e,stroke:#115e59,color:#fff;
+    classDef core fill:#0369a1,stroke:#0284c7,color:#fff;
+    classDef infra fill:#334155,stroke:#475569,color:#fff;
+
+    CleaningTeam((Equipe de Limpeza)):::external
+    HospitalSys((Sistema do Hospital / Hotel)):::external
+    IoT((Tags RFID, NFC e QR Code)):::external
+
+    LETO[Plataforma LETO<br>Gestão de Leitos e Limpeza]:::core
+    DB[(PostgreSQL / Neon<br>Dados Operacionais<br>Isolamento por organization_id)]:::infra
+
+    CleaningTeam -- "Inicia e finaliza limpezas<br>e consulta tarefas" --> LETO
+    HospitalSys -- "Envia dados de alta<br>e movimentações de leitos" --> LETO
+    IoT -- "Envia leituras de tags<br>para controle de tempo" --> LETO
+    LETO -- "Lê e grava dados" --> DB
+
+    style CleaningTeam fill:#0f766e,stroke:#115e59,color:#fff
+    style HospitalSys fill:#1e293b,stroke:#334155,color:#f8fafc
+    style IoT fill:#1e293b,stroke:#334155,color:#f8fafc
+    style LETO fill:#0369a1,stroke:#0284c7,color:#fff
+    style DB fill:#334155,stroke:#475569,color:#fff

@@ -1,0 +1,36 @@
+graph TD
+    classDef external fill:#1e293b,stroke:#334155,color:#f8fafc;
+    classDef client fill:#0f766e,stroke:#115e59,color:#fff;
+    classDef core fill:#0369a1,stroke:#0284c7,color:#fff;
+    classDef infra fill:#334155,stroke:#475569,color:#fff;
+
+    Client[React Native / Web<br>App de Limpeza / Dashboard]:::client
+
+    subgraph CleaningModule [Cleaning Module - NestJS]
+        Guard[JWT Auth Guard<br>Valida token e permissoes]:::core
+        Controller[CleaningController<br>Rotas REST<br>Registro de tags e metricas]:::core
+        DTO[DTOs<br>StartCleaningDto<br>FinishCleaningDto<br>class-validator]:::core
+        Service[CleaningService<br>Regras de tempos e giro<br>Calcula duracao da limpeza]:::core
+        Repository[CleaningRepository<br>Persistencia com TypeORM]:::core
+        Entity[Cleaning Audit Entity<br>organization_id<br>bed_id, start_at, finished_at]:::core
+        IoTAdapter[IoT Cleaning Adapter<br>Converte leitura RFID/NFC/QR]:::core
+    end
+
+    Broker[Broker IoT<br>MQTT / HTTP]:::external
+    DB[(PostgreSQL / Neon<br>Tabela cleaning_logs)]:::infra
+    Sensor((Tag RFID / NFC / QrCode<br>Leitor da Equipe)):::external
+
+    Client -- "PATCH, POST<br>inicio e fim da limpeza" --> Guard
+    Guard -- "Usuario autorizado" --> Controller
+    Controller -- "Valida dados de entrada" --> DTO
+    Controller -- "Envia requisicao" --> Service
+    DTO --> Service
+    Service -- "Aplica organization_id<br>e calcula metricas" --> Repository
+    Repository -- "Usa a Cleaning Entity" --> Entity
+    Repository -- "SELECT, INSERT, UPDATE" --> DB
+
+    Sensor -- "Bate tag de limpeza" --> Broker
+    Broker --> IoTAdapter
+    IoTAdapter -- "Dispara inicio ou fim<br>da limpeza no Service" --> Service
+
+    style CleaningModule fill:#0f172a,stroke:#38bdf8,stroke-width:2px,color:#fff
